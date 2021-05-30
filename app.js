@@ -1,62 +1,92 @@
-const app=require("express")()
-const express=require("express")
-const multer=require('multer')
-const fs=require('fs');
-const path=require('path')
-const classify =require("./ai")
-const sharp=("sharp")
-var storage=multer.diskStorage({
-    destination:(req,file,cb)=>{
-        cb(null,'uploads/images')
+const app = require("express")()
+const express = require("express")
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const multer = require('multer')
+const fs = require('fs');
+const path = require('path')
+const classify = require("./ai")
+const sharp = ("sharp")
+
+
+require('dotenv').config();
+
+
+const port = process.env.PORT || 3000;
+const MONGODB_URI = process.env.MONGODB_URI;
+
+var storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/images')
     },
-    filename:(req,file,cb)=>{
-    cb(null,file.fieldname+'-'+Date.now()+path.extname(file.originalname))
-    
-    
-    
-    }
-    
-    
-    
-    })
-    
-    var checkImage=function(file,cb){
-    
-    
-    var ext=path.extname(file.originalname);
-    
-    if(ext==='.png'||ext==='.jpg'||ext==='.jpeg'){
-        cb(null,true)
-    }else{
-        cb('not an image',false)
-    }
-    
-    
-    }
-    
-    
-    var upload=multer({
-        storage:storage,
-        fileFilter:function(req,file,cb){
-            checkImage(file,cb)
-        }
-    })
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
 
-    app.use(express.static('model'))
 
-app.post("/classify/image",upload.any('img'),async(req,res,next)=>{
-    console.debug(req.files[0].path)
- //  await sharp(req.files[0].path).resize({ height:150, width:150}).toFile(req.files[0].path)
 
-   const image= fs.readFileSync(req.files[0].path)
-    const result=await classify(image)
-    
-    res.json({
-        result
-    })
+    }
+
+
 
 })
-// app.get("*",(req,res)=>{
-//     res.send("welcome to fresh fruit project")
-// })
-app.listen(3000)
+
+var checkImage = function (file, cb) {
+
+
+    var ext = path.extname(file.originalname);
+
+    if (ext === '.png' || ext === '.jpg' || ext === '.jpeg') {
+        cb(null, true)
+    } else {
+        cb('not an image', false)
+    }
+
+
+}
+
+
+var upload = multer({
+    storage: storage,
+    fileFilter: function (req, file, cb) {
+        checkImage(file, cb)
+    }
+})
+
+app.use(bodyParser.json());
+
+
+app.use('/model', express.static(path.join(__dirname, 'model')));
+
+
+app.use(upload.any('img'));
+
+
+//routes
+
+const classifyRouter = require('./routes/classify');
+const relableRouter = require('./routes/relabel');
+
+app.use('/classify', classifyRouter);
+app.use('/relabel', relableRouter);
+
+app.use((error, req, res, next) => {
+    const status = error.statusCode || 500;
+    const state = error.state || 0;
+    const message = error.message;
+    res.status(status).json({ state: state, message: message });
+});
+
+
+mongoose
+    .connect(
+        MONGODB_URI, {
+        useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false
+    })
+    .then(result => {
+        app.listen(port);
+
+        //=======>>>>    //scadual section// <<<<<<=====
+    })
+    .catch(err => {
+        console.log(err);
+    });
