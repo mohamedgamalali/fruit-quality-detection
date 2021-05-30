@@ -56,6 +56,7 @@ app.use(bodyParser.json());
 
 
 app.use('/model', express.static(path.join(__dirname, 'model')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 app.use(upload.any('img'));
@@ -66,8 +67,19 @@ app.use(upload.any('img'));
 const classifyRouter = require('./routes/classify');
 const relableRouter = require('./routes/relabel');
 
+//client
+const clientAuth = require('./routes/client/auth');
+
+//seller
+const sellerAuth = require('./routes/seller/auth');
+
 app.use('/classify', classifyRouter);
 app.use('/relabel', relableRouter);
+
+//clinet 
+app.use('/client', clientAuth);
+
+app.use('/seller', sellerAuth);
 
 app.use((error, req, res, next) => {
     const status = error.statusCode || 500;
