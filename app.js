@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const multer = require('multer')
 const fs = require('fs');
 const path = require('path')
-const classify = require("./ai")
+//const classify = require("./ai")
 const sharp = ("sharp")
 
 
@@ -71,14 +71,15 @@ app.use(upload.any('img'));
 
 //routes
 
-const classifyRouter = require('./routes/classify');
-const relableRouter = require('./routes/relabel');
+// const classifyRouter = require('./routes/classify');
+// const relableRouter = require('./routes/relabel');
 
 //client
 const clientAuth = require('./routes/client/auth');
 
 //seller
 const sellerAuth = require('./routes/seller/auth');
+const sellerShop = require('./routes/seller/shop');
 
 //app.use('/classify', classifyRouter);
 //app.use('/relabel', relableRouter);
@@ -86,7 +87,9 @@ const sellerAuth = require('./routes/seller/auth');
 //clinet 
 app.use('/client', clientAuth);
 
+//seller
 app.use('/seller', sellerAuth);
+app.use('/seller/shop', sellerShop);
 
 app.use((error, req, res, next) => {
     const status = error.statusCode || 500;
