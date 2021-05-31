@@ -78,6 +78,7 @@ exports.postSignup = async (req, res, next) => {
                 sellerMobile: seller.mobile,
                 sellerId: seller._id,
                 sellerImage:seller.image,
+                sellerEmail:seller.email
             }
         });
 
@@ -171,6 +172,7 @@ exports.postLogin = async (req, res, next) => {
                 sellerMobile: seller.mobile,
                 sellerId: seller._id,
                 sellerImage:seller.image,
+                sellerEmail:seller.email
             }
         });
         

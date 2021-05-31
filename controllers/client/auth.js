@@ -72,7 +72,8 @@ exports.postSignup = async (req, res, next) => {
                 clientName: client.name,
                 clientMobile: client.mobile,
                 clientId: client._id,
-                image: client.image
+                image: client.image,
+                clientEmail:client.email
             }
         });
 
@@ -164,7 +165,8 @@ exports.postLogin = async (req, res, next) => {
                 clientName: client.name,
                 clientMobile: client.mobile,
                 clientId: client._id,
-                image: client.image
+                image: client.image,
+                clientEmail:client.email
             }
         });
 
