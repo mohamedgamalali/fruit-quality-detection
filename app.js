@@ -6,7 +6,7 @@ const multer = require('multer')
 const fs = require('fs');
 const path = require('path')
 const sharp = ("sharp")
-
+const clintShop=require("./routes/client/shop")
 
 require('dotenv').config();
 
@@ -77,6 +77,7 @@ const sellerShop = require('./routes/seller/shop');
 
 //clinet 
 app.use('/client', clientAuth);
+app.use('/client/shop', clintShop);
 
 //seller
 app.use('/seller', sellerAuth);
@@ -93,10 +94,13 @@ app.use((error, req, res, next) => {
 mongoose
     .connect(
         MONGODB_URI, {
-        useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false
+        useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false,
+        useCreateIndex:true
     })
     .then(result => {
-        app.listen(port);
+        app.listen(port,()=>{
+            console.debug("server is up on port ",port)
+        });
 
         //=======>>>>    //scadual section// <<<<<<=====
     })
