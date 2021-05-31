@@ -73,8 +73,8 @@ const clientAuth = require('./routes/client/auth');
 //seller
 const sellerAuth = require('./routes/seller/auth');
 
-app.use('/classify', classifyRouter);
-app.use('/relabel', relableRouter);
+//app.use('/classify', classifyRouter);
+//app.use('/relabel', relableRouter);
 
 //clinet 
 app.use('/client', clientAuth);
