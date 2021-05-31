@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const multer = require('multer')
 const fs = require('fs');
 const path = require('path')
-//const classify = require("./ai")
 const sharp = ("sharp")
 
 
@@ -62,17 +61,11 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 
 
-app.use('/model', express.static(path.join(__dirname, 'model')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 app.use(upload.any('img'));
 
-
-//routes
-
-// const classifyRouter = require('./routes/classify');
-// const relableRouter = require('./routes/relabel');
 
 //client
 const clientAuth = require('./routes/client/auth');
@@ -81,8 +74,6 @@ const clientAuth = require('./routes/client/auth');
 const sellerAuth = require('./routes/seller/auth');
 const sellerShop = require('./routes/seller/shop');
 
-//app.use('/classify', classifyRouter);
-//app.use('/relabel', relableRouter);
 
 //clinet 
 app.use('/client', clientAuth);
