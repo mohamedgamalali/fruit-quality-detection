@@ -28,7 +28,19 @@ const productSchema = new schema({
         refPath: 'seller',
         required:true
 
+    },
+
+    pricePerUnit: { // Optional
+        type: Number,
+        required: false
+    },
+
+    price: { // Price per Kilo (Main price)
+        type: Number,
+        required: true
     }
+
+
 }, { timestamps: true });
 
 module.exports = mongoose.model('product', productSchema);

@@ -9,6 +9,8 @@ exports.postAddProduct = async (req, res, next) => {
     const productType = req.body.productType;
     const image = req.files[0]
     const fresh = req.body.fresh || 'none';
+    const price = req.body.price;
+    const pricePerUnit = req.body.pricePerUnit || undefined;
 
     try {
 
@@ -17,7 +19,9 @@ exports.postAddProduct = async (req, res, next) => {
             productType: productType,
             imageUrl: image.path,
             fresh: fresh,
-            seller:req.userId
+            seller:req.userId,
+            price,
+            pricePerUnit
         });
 
         const product = await newProduct.save();
@@ -40,7 +44,7 @@ exports.postEditProduct = async (req, res, next) => {
     const id = req.body.id;
 
     try {
-        const product = await Product.findById(id);
+        const product = await Product.findOne({_id: id, seller: req.userId});
 
         if (!product) {
             const error = new Error(`product not found`);
@@ -49,12 +53,12 @@ exports.postEditProduct = async (req, res, next) => {
             throw error;
         }
 
-        if(product.seller != req.userId){
-            const error = new Error(`not the product owner`);
-            error.statusCode = 403;
-            error.state = 11 ;
-            throw error;
-        }
+        // if(product.seller != req.userId){
+        //     const error = new Error(`not the product owner`);
+        //     error.statusCode = 403;
+        //     error.state = 11 ;
+        //     throw error;
+        // }
 
         product.name = name;
         product.productType = productType;
