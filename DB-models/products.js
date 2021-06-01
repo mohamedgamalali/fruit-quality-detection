@@ -25,13 +25,13 @@ const productSchema = new schema({
     },
     seller: {
         type: schema.Types.ObjectId,
-        refPath: 'seller',
-        required:true
+        ref: 'seller',
+        required: true
 
     },
-    price:{
-    type:Number,
-    required:true
+    price: {
+        type: Number,
+        required: true
     }
 }, { timestamps: true });
 
