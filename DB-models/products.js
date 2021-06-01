@@ -28,6 +28,10 @@ const productSchema = new schema({
         refPath: 'seller',
         required:true
 
+    },
+    price:{
+    type:Number,
+    required:true
     }
 }, { timestamps: true });
 

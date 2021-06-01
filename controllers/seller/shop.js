@@ -10,6 +10,7 @@ exports.postAddProduct = async (req, res, next) => {
     const errors = validationResult(req);
     const name = req.body.name;
     const productType = req.body.productType;
+    const price=req.body.price;
     const image = req.files[0]
     const fresh = req.body.fresh || 'none';
 
@@ -27,7 +28,8 @@ exports.postAddProduct = async (req, res, next) => {
             productType: productType,
             imageUrl: image.path,
             fresh: fresh,
-            seller:req.userId
+            seller:req.userId,
+            price:price
         });
 
         const product = await newProduct.save();
@@ -51,6 +53,7 @@ exports.postEditProduct = async (req, res, next) => {
     const errors = validationResult(req);
     const name = req.body.name;
     const productType = req.body.productType;
+    const price=req.body.price;
     const image = req.files[0]
     const id = req.body.id;
 
@@ -81,6 +84,7 @@ exports.postEditProduct = async (req, res, next) => {
 
         product.name = name;
         product.productType = productType;
+        product.price=price;
 
         if (image) {
             deleteFile.deleteFile(path.join(__dirname + '/../../' + product.imageUrl));

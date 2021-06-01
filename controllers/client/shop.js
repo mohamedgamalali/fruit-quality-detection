@@ -46,8 +46,10 @@ exports.addToCart = async (req, res, next) => {
   const productId = req.body.productId;
   
   const amount = req.body.amount;
-  const unit = req.body.unit;
+  //const unit = req.body.unit;
   let newAmount = 1;
+  let totalPrice=0; // price for every product in cart
+  let finalPrice=0; // the total cart price 
   if (!productId || !amount) {
     return res.status(400).json({
       message: "please enter the product id and amount",
@@ -56,30 +58,54 @@ exports.addToCart = async (req, res, next) => {
 
   try {
     const client = await Client.findById(req.userId);
+    const addedProduct=await Product.findById(productId);
+    if(!addedProduct){
+      return res.status(400).json({
+        message: "product is unavailable",
+      });
+    }
+    //console.log("client isssss" ,addedProduct)
     clientCart = [...client.cart];
-    console.log(clientCart);
+   // console.log(clientCart);
     const createdBefore = clientCart.findIndex((val) => {
       return val.product.toString() === productId.toString();
     });
 
     if (createdBefore >= 0) {
+      //let tempPrice=(addedProduct.price*amount)+clientCart[createdBefore].totalPrice;
       newAmount = clientCart[createdBefore].amount + amount;
-      console.log("created ", newAmount);
+      tempPrice=(addedProduct.price)*amount;
+      totalPrice=clientCart[createdBefore].totalPrice + tempPrice
+      
+     //console.log("total price for created befor is  ", totalPrice);
 
       clientCart[createdBefore].amount = newAmount;
+      clientCart[createdBefore].totalPrice = totalPrice;
     } else {
+      totalPrice=addedProduct.price*amount;
+      //console.log("total price for new product added is  ", totalPrice);
       clientCart.push({
         product: productId,
         amount: amount,
-        unit: unit,
+        totalPrice:totalPrice
+      //  unit: unit,
       });
+      
     }
-
     client.cart = clientCart;
     await client.save();
+
+    
+    for (prod in client.cart) {
+       
+        finalPrice=finalPrice+clientCart[prod].totalPrice;
+        console.log("final price in for loop is ",finalPrice)
+    }
+    
     res.status(201).json({
       state: 1,
       message: client.cart,
+      finalPrice:finalPrice
     });
   } catch (error) {
       
