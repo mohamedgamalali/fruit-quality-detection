@@ -83,6 +83,13 @@ app.use('/client/shop', clintShop);
 app.use('/seller', sellerAuth);
 app.use('/seller/shop', sellerShop);
 
+// 404 handler
+app.use((req, res, next) =>{
+    const error = new Error(`The requested URL: ${req.url} was NOT found on this server!`);
+    error.statusCode = 404;
+    next(error);
+});
+
 app.use((error, req, res, next) => {
     const status = error.statusCode || 500;
     const state = error.state || 0;
