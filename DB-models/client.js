@@ -125,6 +125,7 @@ clientSchema.methods.addToCart = function (prodductId, amount, unit, ref) {
     return this.save();
 }
 
+
 clientSchema.methods.removeFromCart = function (cartItemId) {
     const updatedCartItems = this.cart.filter(item => {
         return item._id.toString() !== cartItemId.toString();
