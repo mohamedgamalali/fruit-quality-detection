@@ -8,29 +8,19 @@ const authController = require('../../controllers/seller/shop');
 
 const router  = express.Router();
 
-router.post('/addProduct' , isAuth,[
-    body('name')
-    .not().isEmpty()
-    .trim(),
-    body('productType')
-    .not().isEmpty()
-    .trim(),
-    body('fresh')
-    .not().isEmpty()
-    .trim(),
-],authController.postAddProduct);
 
-router.post('/editProduct', isAuth, [
-    body('name')
-    .not().isEmpty()
-    .trim(),
-    body('productType')
-    .not().isEmpty()
-    .trim(),
-    body('id')
-    .not().isEmpty()
-    
-],authController.postEditProduct);
+// Validation Rules
+const {
+    addProductValidations,
+    editProductValidations
+} = require('../../helpers/validation');
+
+const validate = require('../../meddlewere/seller/validate');
+
+
+router.post('/addProduct', isAuth, addProductValidations(), validate,  authController.postAddProduct);
+
+router.post('/editProduct', isAuth, editProductValidations(), validate, authController.postEditProduct);
 
 router.get('/Products',isAuth ,authController.getProduct);
 

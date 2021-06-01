@@ -1,5 +1,3 @@
-const { check, validationResult } = require('express-validator');
-
 const path = require('path')
 
 const deleteFile = require("../../helpers/file");
@@ -7,20 +5,12 @@ const deleteFile = require("../../helpers/file");
 const Product = require('../../DB-models/products');
 
 exports.postAddProduct = async (req, res, next) => {
-    const errors = validationResult(req);
     const name = req.body.name;
     const productType = req.body.productType;
     const image = req.files[0]
     const fresh = req.body.fresh || 'none';
 
-
     try {
-        if (!errors.isEmpty()) {
-            const error = new Error(`validation faild for ${errors.array()[0].param} '${errors.array()[0].msg}'`);
-            error.statusCode = 422;
-            error.state = 5;
-            throw error;
-        }
 
         const newProduct = new Product({
             name: name,
@@ -38,31 +28,18 @@ exports.postAddProduct = async (req, res, next) => {
             product: product
         });
 
-
     } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
-        }
         next(err);
     }
 }
 
 exports.postEditProduct = async (req, res, next) => {
-    const errors = validationResult(req);
     const name = req.body.name;
     const productType = req.body.productType;
     const image = req.files[0]
     const id = req.body.id;
 
-
     try {
-        if (!errors.isEmpty()) {
-            const error = new Error(`validation faild for ${errors.array()[0].param} '${errors.array()[0].msg}'`);
-            error.statusCode = 422;
-            error.state = 5;
-            throw error;
-        }
-
         const product = await Product.findById(id);
 
         if (!product) {
@@ -94,22 +71,16 @@ exports.postEditProduct = async (req, res, next) => {
             product: updated
         });
 
-
     } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
-        }
         next(err);
     }
 }
 
 exports.getProduct = async (req, res, next) => {
-
     const page = req.query.page || 1;
     const productPerPage = 10 ;
 
     try {
-
 
         const products = await Product.find({seller:req.userId})
             .skip((page - 1) * productPerPage)
@@ -126,9 +97,6 @@ exports.getProduct = async (req, res, next) => {
 
 
     } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500;
-        }
         next(err);
     }
 }
