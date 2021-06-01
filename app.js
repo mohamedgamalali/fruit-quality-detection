@@ -5,9 +5,8 @@ const bodyParser = require('body-parser');
 const multer = require('multer')
 const fs = require('fs');
 const path = require('path')
-//const classify = require("./ai")
 const sharp = ("sharp")
-
+const clintShop=require("./routes/client/shop")
 
 require('dotenv').config();
 
@@ -62,17 +61,11 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 
 
-app.use('/model', express.static(path.join(__dirname, 'model')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 app.use(upload.any('img'));
 
-
-//routes
-
-// const classifyRouter = require('./routes/classify');
-// const relableRouter = require('./routes/relabel');
 
 //client
 const clientAuth = require('./routes/client/auth');
@@ -81,11 +74,10 @@ const clientAuth = require('./routes/client/auth');
 const sellerAuth = require('./routes/seller/auth');
 const sellerShop = require('./routes/seller/shop');
 
-//app.use('/classify', classifyRouter);
-//app.use('/relabel', relableRouter);
 
 //clinet 
 app.use('/client', clientAuth);
+app.use('/client/shop', clintShop);
 
 //seller
 app.use('/seller', sellerAuth);
@@ -102,10 +94,13 @@ app.use((error, req, res, next) => {
 mongoose
     .connect(
         MONGODB_URI, {
-        useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false
+        useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false,
+        useCreateIndex:true
     })
     .then(result => {
-        app.listen(port);
+        app.listen(port,()=>{
+            console.debug("server is up on port ",port)
+        });
 
         //=======>>>>    //scadual section// <<<<<<=====
     })
