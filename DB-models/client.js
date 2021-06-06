@@ -53,9 +53,9 @@ const clientSchema = new schema({
             type: Number,
             required: true
         },
-        totalPrice:{
-      type:Number,
-      default:0
+        totalPrice: {
+            type: Number,
+            default: 0
         },
         // unit: {
         //     type: String,
@@ -63,8 +63,8 @@ const clientSchema = new schema({
         //     required: true
         // },
         path: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'product'
+            type: String,
+            default: 'product'
         }
     }],
     // wallet: {
@@ -100,7 +100,7 @@ const clientSchema = new schema({
         type: String,
         required: true
     },
-    
+
     // verficationCode:String,
     // codeExpireDate:Date,
     // tempMobile:String,
