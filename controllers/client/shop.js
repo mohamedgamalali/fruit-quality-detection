@@ -45,7 +45,9 @@ exports.getProducts = async (req, res, next) => {
 exports.addToCart = async (req, res, next) => {
   const productId = req.body.productId;
   
-  const amount = req.body.amount;
+  let amount = req.body.amount;
+  amount=parseInt(amount);
+  console.log('type is ',typeof amount)
   //const unit = req.body.unit;
   let newAmount = 1;
   let totalPrice=0; // price for every product in cart
