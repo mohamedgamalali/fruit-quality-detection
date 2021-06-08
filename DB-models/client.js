@@ -57,6 +57,9 @@ const clientSchema = new schema({
             type: Number,
             default: 0
         },
+        seller:{
+        type:schema.Types.ObjectId
+        },
         // unit: {
         //     type: String,
         //     enum: ['kg', 'g', 'grain', 'Liter', 'Gallon', 'drzn', 'bag'],

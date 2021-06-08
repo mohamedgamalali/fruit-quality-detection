@@ -1,73 +1,83 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const schema = mongoose.Schema;
 
-const orderSchema = new schema({
+const orderSchema = new schema(
+  {
     client: {
-        type: schema.Types.ObjectId,
-        ref: 'client'
+      type: schema.Types.ObjectId,
+      ref: "client",
     },
-    seller: {
-        type: schema.Types.ObjectId,
-        ref: 'seller'
+    // location: {
+    //   type: { type: String },
+    //   coordinates: [Number],
+    // },
+    locationName: {
+     
+        type: String,
+        required: true,
+    }
+,
+      locationAddres: {
+        type: String,
+        required: true,
+      },
+    
+    
+    status: {
+      type: String,
+      default: "started",
     },
-    products: [{
+    // seller: {
+    //     type: schema.Types.ObjectId,
+    //     ref: 'seller'
+    // },
+    products: [
+      {
         product: {
-            type: schema.Types.Mixed,
-            refPath: 'products.path'
+          type: schema.Types.ObjectId,
+          ref: "product",
         },
         amount: {
-            type: Number,
-            required: true
+          type: Number,
+          required: true,
         },
-        path: {
-            type: String,
-            default: 'product'
-        }
-    }],
-    location: {
-        type: { type: String },
-        coordinates: [Number]
-    },
-    locationDetails: {
-        name:{
-            type: String,
-            required: true
+        seller:{
+            type:schema.Types.ObjectId,
+            ref:"seller"
         },
-        stringAdress:{
-            type: String,
-            required: true
-        },
-        mobile2:{
-            type: String,
-            required: true
-        }
+       
+      },
+    ],
+
+    // pay: {
+    //     type: Boolean,
+    //     default: false
+    // },
+    // reted:{
+    //     type: Boolean,
+    //     default: false
+    // },
+    totalPrice:{
+        type:Number,
+        required:true,
+        default:0
     },
-    status: {
-        type: String,
-        default: 'started'
-    },
-    pay: {
-        type: Boolean,
-        default: false
-    },
-    reted:{
-        type: Boolean,
-        default: false
-    },
-}, { timestamps: true });
+  },
+ 
+  { timestamps: true }
+);
 
 orderSchema.index({ location: "2dsphere" });
 
 orderSchema.methods.cancelOrder = function () {
-    this.status = 'cancel';
-    return this.save();
+  this.status = "cancel";
+  return this.save();
 };
 
 orderSchema.methods.endOrder = function () {
-    this.status = 'ended';
-    return this.save();
+  this.status = "ended";
+  return this.save();
 };
 
-
-module.exports = mongoose.model('order', orderSchema);
+module.exports = mongoose.model("order", orderSchema);

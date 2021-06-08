@@ -31,4 +31,7 @@ router.post(
 
 router.get("/Products", isAuth, authController.getProduct);
 
+router.get("/orders", isAuth, authController.getOrder);
+
+
 module.exports = router;
