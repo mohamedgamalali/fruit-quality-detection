@@ -35,6 +35,10 @@ const clientSchema = new schema({
         type: Boolean,
         default: false
     },
+    verficationCode: {
+        type: String,
+        default:""
+    },
     blocked: {
         type: Boolean,
         default: false
