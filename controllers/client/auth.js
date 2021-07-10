@@ -2,9 +2,13 @@ const bycript = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { check, validationResult } = require('express-validator');
 const crypto = require('crypto');
+const sendEmail = require('../../helpers/sendVerificationEmail').sendemail
+
 //const SMS = require('../../helpers/sms');
 
 const Client = require('../../DB-models/client');
+const { response } = require('express');
+const { json } = require('body-parser');
 
 exports.postSignup = async (req, res, next) => {
     const errors = validationResult(req);
@@ -33,6 +37,7 @@ exports.postSignup = async (req, res, next) => {
             error.state = 6;
             throw error;
         }
+
         const checkClientEmail = await Client.findOne({ email: email });
 
         if (checkClientEmail) {
@@ -41,6 +46,7 @@ exports.postSignup = async (req, res, next) => {
             error.state = 26;
             throw error;
         }
+        const vcode = crypto.randomBytes(4).toString('hex');
         const hashedPass = await bycript.hash(password, 12);
         const newClient = new Client({
             name: name,
@@ -50,7 +56,8 @@ exports.postSignup = async (req, res, next) => {
             code: code,
             password: hashedPass,
             updated: Date.now().toString(),
-            FCMJwt: [FCM]
+            FCMJwt: [FCM],
+            verficationCode:vcode,
         });
 
         const client = await newClient.save();
@@ -64,16 +71,26 @@ exports.postSignup = async (req, res, next) => {
             process.env.JWT_PRIVATE_KEY_CLIENT
         );
 
+        
+       const sendemail= sendEmail(req.body.email, 'verify your email address', `
+      <a> <h1> here is your verification code :</h1> 
+            <h3> ${vcode} </h3>
+      </a>
+      `);
+     
+     
+
+
         res.status(201).json({
             state: 1,
-            message: 'client created and logedIn',
+            message: 'client created and logedIn please go to your email to verify your account',
             data: {
                 token: token,
                 clientName: client.name,
                 clientMobile: client.mobile,
                 clientId: client._id,
                 image: client.image,
-                clientEmail:client.email
+                clientEmail: client.email
             }
         });
 
@@ -85,6 +102,41 @@ exports.postSignup = async (req, res, next) => {
     }
 }
 
+exports.verifyEmail = async (req, res, next) => {
+
+    const errors = validationResult(req);
+    const verificationCode = req.body.verificationCode;
+    try {
+        if (!errors.isEmpty()) {
+            const error = new Error(`validation faild for ${errors.array()[0].param} in ${errors.array()[0].location}`);
+            error.statusCode = 422;
+            error.state = 5;
+            throw error;
+        }
+        const client = await Client.findById(req.userId)
+        if(client.verficationCode==verificationCode){
+             client.verfication=true
+            await client.save()
+          console.log(client);
+
+            return res.status(200).json({
+                state: 1,
+                message: "account verified successfully"})
+            
+        }
+        
+        res.status(400).json({
+            state: 0,
+            message: "verify code is wrong",
+          
+        });
+
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);}
+    }
 exports.postLogin = async (req, res, next) => {
     const errors = validationResult(req);
     const emailOrPhone = req.body.emailOrPhone;
@@ -166,7 +218,7 @@ exports.postLogin = async (req, res, next) => {
                 clientMobile: client.mobile,
                 clientId: client._id,
                 image: client.image,
-                clientEmail:client.email
+                clientEmail: client.email
             }
         });
 

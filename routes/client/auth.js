@@ -4,6 +4,7 @@ const {body}       = require('express-validator');
 const authController = require('../../controllers/client/auth');
 //const isAuthVerfy         = require('../../meddlewere/client/isAuthVerfy');
 //const isAuth         = require('../../meddlewere/client/isAuth');
+const isAuth = require('../../meddlewere/client/isAuth');
 
 
 const router  = express.Router();
@@ -42,6 +43,9 @@ router.post('/login',[
     .not().isEmpty()
     .trim()
 ],authController.postLogin);
+
+
+router.post('/verifyEmail',isAuth,authController.verifyEmail);
 
 // //verfication
 // router.post('/signup/verfication/send',isAuthVerfy,authController.postSendSms);
